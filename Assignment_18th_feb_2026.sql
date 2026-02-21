@@ -327,7 +327,7 @@ HAVING AVG(length) > 115;
 SELECT EXTRACT(MONTH FROM payment_date), SUM(amount) AS total_revenu
 FROM payment
 GROUP BY EXTRACT (MONTH FROM payment_date)
-HAVING SUM(amount) > 5000;
+HAVING SUM(amount) > 5000;	
 
 -- Show top 5 customers by total payment.
 SELECT c.customer_id, c.first_name ||' '|| c.last_name AS full_name, SUM(p.amount) AS total_payment
@@ -472,3 +472,5 @@ JOIN city
 	USING (city_id)
 GROUP BY c.first_name, c.last_name, city.city
 ORDER BY total_payment DESC;
+
+SELECT MAX(IN(2,
