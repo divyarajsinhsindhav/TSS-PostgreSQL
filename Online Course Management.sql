@@ -253,15 +253,15 @@ GROUP BY i.instructor_id, i.full_name
 ORDER BY total_course DESC;
 
 -- Courses with highest rating
-SELECT c.title, SUM(rating) AS highest_rating
+SELECT c.title, ROUND(AVG(rating), 2) AS highest_rating
 FROM course c
 JOIN enrollment e
 	USING (course_id)
 JOIN review
 	USING (enrollment_id)
 GROUP BY c.title
-ORDER BY highest_rating
-LIMIT 1;
+ORDER BY highest_rating DESC
+LIMIT 1 WITH T;
 
 -- Student Enrolled in more than 2 course
 SELECT s.student_id, s.full_name, COUNT(*) AS number_of_course
