@@ -50,3 +50,45 @@ BEGIN
 
 END;
 $$;
+
+SELECT get_customer_rental_summary(1);
+
+
+CREATE OR REPLACE FUNCTION get_overdue_rentals(p_days INT)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+	DECLARE
+		rec RECORD;
+		rented_days INT;
+		rental_cursor CURSOR FOR
+			SELECT 
+				r.rental_id,
+				f.title,
+				r.rental_date
+        FROM rental r
+        JOIN inventory i USING (inventory_id)
+        JOIN film f USING (film_id)
+        JOIN customer c USING (customer_id)
+        WHERE r.return_date IS NULL;
+	BEGIN
+		OPEN rental_cursor;
+		LOOP
+	        FETCH rental_cursor INTO rec;
+	        EXIT WHEN NOT FOUND;
+	
+	        rented_days := CURRENT_DATE - rec.rental_date::DATE;
+	
+	        IF rented_days > p_days THEN
+	            RAISE NOTICE 
+	            'Rental ID: %, Film: %, Rented Days: %',
+	            rec.rental_id,
+	            rec.title,
+	            rented_days;
+	        END IF;
+		END LOOP;
+		CLOSE rental_cursor;
+	END;
+$$;
+
+SELECT get_overdue_rentals(1);
